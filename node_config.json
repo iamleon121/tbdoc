@@ -1,0 +1,16 @@
+{
+    "mainServerIp": "192.168.110.10",
+    "mainServerPort": 80,
+    "nodePort": 80,
+    "syncInterval": 10,
+    "heartbeat": {
+        "interval": 10,
+        "timeout": 30
+    },
+    "cleanup": {
+        "enabled": true,
+        "cleanOnStartup": true,
+        "cleanEndedMeetings": true
+    },
+    "nodeId": "node-2a330d7f"
+}

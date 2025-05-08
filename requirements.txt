@@ -1,0 +1,22 @@
+# 分布式文件服务节点依赖项
+
+# Web框架
+fastapi==0.95.0
+uvicorn==0.21.1
+
+# 网络和异步支持
+aiohttp==3.8.4      # 异步HTTP客户端，用于与主控服务器通信
+
+# 文件处理
+python-multipart==0.0.6  # 用于处理文件上传
+
+# CORS支持已内置在FastAPI中，不需要额外的包
+
+# 注意：以下库是Python标准库，不需要单独安装
+# - os
+# - asyncio
+# - logging
+# - time
+# - socket
+# - contextlib
+# - random

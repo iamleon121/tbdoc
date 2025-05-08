@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分布式文件服务节点控制台</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>分布式文件服务节点控制台</h1>
+            <div class="node-info">
+                <div class="node-id">节点ID: <span id="nodeId">加载中...</span></div>
+                <div class="node-ip">节点IP: <span id="nodeIp">加载中...</span></div>
+            </div>
+        </header>
+
+        <section class="status-card">
+            <h2>节点状态</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-label">运行状态</div>
+                    <div class="status-value" id="runningStatus">
+                        <span class="status-indicator"></span>
+                        <span class="status-text">未知</span>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">连接状态</div>
+                    <div class="status-value" id="connectionStatus">
+                        <span class="status-indicator"></span>
+                        <span class="status-text">未知</span>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">最近同步</div>
+                    <div class="status-value" id="lastSync">未同步</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">同步状态</div>
+                    <div class="status-value">
+                        <span id="syncStatus" class="status-text">未知</span>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">会议数量</div>
+                    <div class="status-value" id="meetingCount">0</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">存储使用</div>
+                    <div class="status-value" id="storageUsage">0 Bytes</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">运行时长</div>
+                    <div class="status-value" id="uptime">0分钟</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="config-panel">
+            <h2>配置设置</h2>
+            <form id="configForm">
+                <div class="form-group">
+                    <label for="mainServerIp">主控服务器IP</label>
+                    <input type="text" id="mainServerIp" name="mainServerIp" placeholder="例如: 192.168.110.10" value="192.168.110.10">
+                </div>
+                <div class="form-group">
+                    <label for="mainServerPort">主控服务器端口</label>
+                    <input type="number" id="mainServerPort" name="mainServerPort" placeholder="例如: 80" min="1" max="65535" value="80">
+                </div>
+                <div class="form-group">
+                    <label for="nodePort">节点服务端口</label>
+                    <input type="number" id="nodePort" name="nodePort" placeholder="例如: 8001" min="1" max="65535" value="8001">
+                </div>
+
+                <h3>公网访问配置</h3>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="usePublicAddress" name="usePublicAddress">
+                        使用公网地址注册节点
+                    </label>
+                    <p class="help-text">启用此选项将使用下方配置的公网IP和端口向主控服务器注册，而不是自动检测的内网地址</p>
+                </div>
+                <div class="form-group">
+                    <label for="publicIp">公网IP地址</label>
+                    <input type="text" id="publicIp" name="publicIp" placeholder="例如: 123.45.67.89">
+                </div>
+                <div class="form-group">
+                    <label for="publicPort">公网端口</label>
+                    <input type="number" id="publicPort" name="publicPort" placeholder="例如: 8001" min="1" max="65535">
+                    <p class="help-text">如果留空，将使用节点服务端口</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="syncInterval">同步间隔 (秒)</label>
+                    <input type="number" id="syncInterval" name="syncInterval" min="10" max="3600" value="10">
+                </div>
+                <div class="form-group">
+                    <label for="heartbeatInterval">心跳间隔 (秒)</label>
+                    <input type="number" id="heartbeatInterval" name="heartbeatInterval" min="10" max="300" value="30">
+                </div>
+
+                <h3>清理配置</h3>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="cleanupEnabled" name="cleanupEnabled" checked>
+                        启用自动清理
+                    </label>
+                    <p class="help-text">总开关，控制是否启用所有自动清理功能</p>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="cleanOnStartup" name="cleanOnStartup" checked>
+                        启动时清理非活动会议
+                    </label>
+                    <p class="help-text">节点启动时自动清理不在活动列表中的会议文件</p>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="cleanEndedMeetings" name="cleanEndedMeetings" checked>
+                        自动清理已结束会议
+                    </label>
+                    <p class="help-text">当会议结束时自动清理会议文件</p>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">保存配置</button>
+                    <button type="button" class="btn btn-secondary" id="resetConfig">重置</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="control-panel">
+            <h2>服务控制</h2>
+            <div class="control-buttons">
+                <button id="toggleService" class="btn btn-success">停止服务</button>
+            </div>
+        </section>
+
+        <section class="meetings-panel">
+            <h2>会议列表</h2>
+            <div class="meetings-container" id="meetingsContainer">
+                <div class="no-meetings">暂无会议数据</div>
+            </div>
+
+        </section>
+
+        <div id="notification" class="notification hidden">
+            <span id="notificationMessage"></span>
+            <button id="closeNotification">&times;</button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
